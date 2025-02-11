@@ -59,3 +59,6 @@ jwt:
   secret: c2VjcmV0LWtleS1mb3Itand0LXNpZ25pbmctYW5kLXZlcmlmeWluZw== # Base64 인코딩된 JWT 비밀키
   access-token-expiration: 3600000 # AccessToken 만료 시간 (밀리초, 1시간)
   refresh-token-expiration: 604800000 # RefreshToken 만료 시간 (밀리초, 7일)
+
+front:
+  redirect-url: "http://localhost:5173/"

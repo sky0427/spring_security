@@ -48,20 +48,13 @@ public class MemberController {
                 return new ResponseEntity<>("비밀번호가 일치하지 않습니다.", HttpStatus.UNAUTHORIZED);
             }
 
-            MemberDto memberDto = new MemberDto(
-                    member.getEmail(),
-                    member.getNickname(),
-                    member.getProfileUrl(),
-                    member.getRole().name()
-            );
-
-            String accessToken = jwtUtil.generateAccessToken(memberDto);
-            String refreshToken = jwtUtil.generateRefreshToken(memberDto.getEmail());
+            String accessToken = jwtUtil.generateAccessToken(member.getEmail(), member.getRole().name());
+            String refreshToken = jwtUtil.generateRefreshToken(member.getEmail());
 
             jwtUtil.addJwtToCookie(accessToken, response, "accessToken");
             jwtUtil.addJwtToCookie(refreshToken, response, "refreshToken");
 
-            redisService.saveRefreshToken(memberDto.getEmail(), refreshToken);
+            redisService.saveRefreshToken(member.getEmail(), refreshToken);
 
             return new ResponseEntity<>("로그인 성공", HttpStatus.OK);
         } catch (IllegalArgumentException e) {
@@ -103,14 +96,7 @@ public class MemberController {
                 if (savedRefreshToken != null && savedRefreshToken.equals(refreshToken)) {
                     Member member = memberService.findByEmail(email);
 
-                    MemberDto memberDto = new MemberDto(
-                            member.getEmail(),
-                            member.getNickname(),
-                            member.getProfileUrl(),
-                            member.getRole().name()
-                    );
-
-                    String newAccessToken = jwtUtil.generateAccessToken(memberDto);
+                    String newAccessToken = jwtUtil.generateAccessToken(member.getEmail(), member.getRole().name());
                     jwtUtil.addJwtToCookie(newAccessToken, response, "accessToken");
                     return new ResponseEntity<>("AccessToken 갱싱 성공", HttpStatus.OK);
                 } else {
